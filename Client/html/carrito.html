@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="./css/carrito-style.css">
+    <link rel="stylesheet" href="./css/nav-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+        fetchCarrito();
+    });
+    </script>
+    <script src="./js/countCart.js"></script>
+    <header>
+        <div class="container">
+            <h1>Estrella Esperanza</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/pagina-productos">Producto</a></li>
+                    <li><a href="/nosotros">Nosotros</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    <li id="loginLink"><a href="/login">Iniciar Sesión</a></li>
+                    <li id="signupLink"><a href="/signup">Registro</a></li>
+                    <li id="logoutLink" style="display: none;"><a href="/logout">Cerrar Sesión</a></li>
+                    <li id="cartLink" style="display: none;">
+                        <a href="/carrito">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="cartCount" style="background-color: var(--color-accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.8em; margin-left: 5px;">0</span>
+                        </a>                        
+                    </li>
+                </ul>
+            </nav>            
+        </div>
+    </header>
+    <br>
+    <div class="cart">
+        <h1>Carrito de Compras</h1>
+        <div id="cartItems"></div>
+        <div class="cart-total">
+            Total: $<span id="totalPrice">0</span>
+        </div>
+        <div class="cart-buttons">
+            <form action="/">
+                <button class="btn-continue">Seguir Comprando</button>
+            </form>
+            <button class="btn-checkout" id="finalizarCompra">Finalizar Compra</button>
+        </div>
+    </div>
+    
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Estrella Esperanza derechos reservados para recibiran regalos estas fiestas</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('finalizarCompra').addEventListener('click', function (event) {
+        event.preventDefault();
+
+        fetch('/finalizarCompra', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error al finalizar la compra:', data.error);
+            } else {
+                window.location.href = '/compraFinalizada';
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud de finalizar compra:', error);
+        });
+    });
+
+    </script>
+    <script>
+        // Manejar el cierre de sesión
+        document.getElementById('logoutLink').addEventListener('click', function (event) {
+            event.preventDefault(); // Evitar que el enlace se siga de forma predeterminada
+            fetch('/logout', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        // Redirigir al usuario al índice
+                        window.location.href = '/'; 
+                    } else {
+                        console.error('Error al cerrar sesión');
+                    }
+                })
+                .catch(error => console.error('Error en la solicitud de cierre de sesión:', error));
+        });
+    </script>
+    <script src="./html/js/sesionLink.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    fetch('/getCart', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error al obtener el carrito:', data.error);
+        } else {
+            mostrarCarrito(data);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud de obtener carrito:', error);
+    });
+});
+function mostrarCarrito(data) {
+    const cartItemsContainer = document.getElementById('cartItems');
+    const totalPriceElement = document.getElementById('totalPrice');
+
+    let total = 0;
+
+    cartItemsContainer.innerHTML = '';
+
+    data.productos.forEach(producto => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('cart-item');
+
+        itemDiv.innerHTML = `
+            <img src="${producto.imagen_url}" alt="${producto.nombre}" class="item-image">
+            <div class="item-info">
+                <h3>${producto.nombre}</h3>
+                <p>${producto.descripcion || 'Descripción breve del producto'}</p>
+            </div>
+            <div class="item-quantity">
+                <button onclick="actualizarCantidad('${producto.id_producto}', 'decrement')">-</button>
+                <span>${producto.cantidad}</span>
+                <button onclick="actualizarCantidad('${producto.id_producto}', 'increment')">+</button>
+            </div>
+            <div class="item-price">$${(producto.precio * producto.cantidad).toFixed(2)}</div>
+        `;
+
+        total += producto.precio * producto.cantidad;
+
+        cartItemsContainer.appendChild(itemDiv);
+    });
+
+    totalPriceElement.textContent = total.toFixed(2);
+
+    const cartCountElement = document.getElementById('cartCount');
+    const totalItems = data.productos.reduce((sum, producto) => sum + producto.cantidad, 0);
+    cartCountElement.textContent = totalItems;
+}
+
+
+function fetchCarrito() {
+    fetch('/getCart', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error al obtener el carrito:', data.error);
+        } else {
+            mostrarCarrito(data);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud de obtener carrito:', error);
+    });
+}
+
+
+function actualizarCantidad(id_producto, accion) {
+    fetch('/updateCart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_producto, accion }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error al actualizar la cantidad:', data.error);
+        } else {
+            fetchCarrito();
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud de actualización del carrito:', error);
+    });
+}
+
+
+    </script>
+</body>
+</html>

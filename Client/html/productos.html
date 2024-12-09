@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Estrella Esperanza</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/productos-style.css">
+    <link rel="stylesheet" href="./css/nav-style.css">
+    <link rel="stylesheet" href="./css/modaladdProductos-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <script src="./js/countCart.js"></script>
+        <div class="container">
+            <h1>Estrella Esperanza</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/pagina-productos">Producto</a></li>
+                    <li><a href="/nosotros">Nosotros</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    <li id="loginLink"><a href="/login">Iniciar Sesión</a></li>
+                    <li id="signupLink"><a href="/signup">Registro</a></li>
+                    <li id="logoutLink" style="display: none;"><a href="/logout">Cerrar Sesión</a></li>
+                    <li id="cartLink" style="display: none;">
+                        <a href="/carrito">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="cartCount" style="background-color: var(--color-accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.8em; margin-left: 5px;">0</span>
+                        </a>                        
+                    </li>
+                </ul>
+            </nav> 
+        </div>
+    </header>
+
+    <main>
+        <section class="product-hero">
+            <h2>Catálogo de Productos</h2>
+            <p>Pan de Navideño,Chocolate Caliente y más para celebrar en estas fechas Navideñas</p>
+            <div id="add-product-btn-container" style="display: none;">
+                <button onclick="openAddProductModal()">Agregar Producto</button>
+            </div>
+        </section>
+
+        <div class="container">
+            <section class="products" id="product-list">
+                <!-- Productos se cargarán dinámicamente aquí -->
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Estrella Esperanza derechos reservados para recibiran regalos estas fiestas.</p>
+        </div>
+    </footer>
+
+    <script src="./js/sesionLink.js"></script>
+    <script>
+        // Función para obtener y renderizar productos
+        async function loadProducts() {
+            try {
+                const response = await fetch('/productos');
+                const products = await response.json();
+                const productContainer = document.getElementById('product-list');
+                productContainer.innerHTML = '';
+                products.forEach(product => {
+                    const productElement = document.createElement('div');
+                    productElement.classList.add('product');
+                    productElement.addEventListener('click', () => {
+                        window.location.href = `/ver_producto?id=${product.id_producto}`;
+                    });
+                    productElement.innerHTML = `
+                        <img src="${product.imagen_url || 'https://via.placeholder.com/150'}" alt="${product.nombre}">
+                        <h3 id="${product.id_producto}">${product.nombre}</h3>
+                        <p>${product.descripcion}</p>
+                        <span>$${product.precio.toFixed(2)} MXN</span>
+                    `;
+                    productContainer.appendChild(productElement);
+                });
+            } catch (error) {
+                console.error('Error al cargar productos:', error);
+            }
+        }
+
+        async function checkIfAdmin() {
+            try {
+                const response = await fetch('/isAdmin');
+                const data = await response.json();
+                if (data.isAdmin) {
+                    document.getElementById('add-product-btn-container').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error al verificar rol de administrador:', error);
+            }
+        }
+
+        loadProducts();
+        checkIfAdmin();
+
+        function openAddProductModal() {
+            document.getElementById('addProductModal').style.display = 'flex';
+        }
+
+        function closeAddProductModal() {
+            document.getElementById('addProductModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('addProductModal');
+            if (event.target === modal) {
+                closeAddProductModal();
+            }
+        };
+
+        async function handleAddProduct(event) {
+            event.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const precio = document.getElementById('precio').value;
+            const stock = document.getElementById('stock').value;
+            const id_categoria = document.getElementById('id_categoria').value;
+            const imagen_url = document.getElementById('imagen_url').value;
+            const productData = { nombre, descripcion, precio, stock, id_categoria, imagen_url, imagen: null };
+            
+            try {
+                const response = await fetch('/addProductos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productData),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    closeAddProductModal();
+                    document.getElementById('addProductForm').reset();
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error('Error al agregar producto:', error);
+            }
+        }
+    </script>
+
+    <!-- Modal para agregar producto -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeAddProductModal()">&times;</span>
+            <h2>Agregar Nuevo Producto</h2>
+            <form id="addProductForm" onsubmit="handleAddProduct(event)">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" required></textarea>
+                <label for="precio">Precio:</label>
+                <input type="number" id="precio" name="precio" step="0.01" required>
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" name="stock" required>
+                <label for="id_categoria">Categoría:</label>
+                <select id="id_categoria" name="id_categoria" required>
+                    <option value="" disabled selected>Seleccione una categoría</option>
+                    <option value="1">Pan</option>
+                    <option value="2">Bebida</option>
+                    <option value="3">Dulce</option>
+                    <option value="4">Pastel</option>
+                    <option value="5">Galleta</option>
+                </select>
+                <label for="imagen_url">URL de la imagen:</label>
+                <input type="text" id="imagen_url" name="imagen_url" placeholder="https://ejemplo.com/imagen.jpg" required>
+                <button type="submit">Agregar Producto</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

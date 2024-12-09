@@ -1,0 +1,154 @@
+:root {
+    --color-primary: #e74c3c; /* Rojo suave */
+    --color-secondary: #2ecc71; /* Verde oliva suave */
+    --color-accent: #f39c12; /* Dorado suave */
+    --color-background: #d8bda7; /* Tono cálido beige rosado */
+    --color-text: #2f2f2f; /* Gris oscuro para contraste */
+    --snowflake-color: #f39c12; /* Dorado para los copos de nieve */
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+header {
+    background-color: var(--color-primary);
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5em;
+    margin: 0;
+    text-align: center;
+    color: var(--color-text);
+    text-shadow: 2px 2px var(--color-accent);
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+    align-items: center; /* Asegura que todos los elementos del nav estén alineados verticalmente */
+}
+
+nav ul li a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+nav ul li a:hover {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+}
+
+main {
+    padding: 40px 0;
+}
+
+footer {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+:root {
+    --snowflake-color: #ffffff; /* Blanco puro */
+}
+/* Estilo para los copos de nieve animados */
+.snowflakes {
+    position: fixed; /* Fijo para que siempre esté visible */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden; /* Para evitar que los copos se salgan del área visible */
+}
+
+.snowflake {
+    position: absolute;
+    color: var(--snowflake-color);
+    font-size: 24px;
+    animation: fall 10s infinite linear, sway 3s infinite ease-in-out;
+    opacity: 0.8; /* Para un efecto más suave */
+}
+
+/* Animación de caída */
+@keyframes fall {
+    0% {
+        top: -10%; /* Inicia fuera de la pantalla */
+        opacity: 1;
+    }
+    100% {
+        top: 100%; /* Termina fuera de la pantalla */
+        opacity: 0;
+    }
+}
+
+/* Animación de balanceo horizontal */
+@keyframes sway {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(20px); /* Oscilación horizontal */
+    }
+}
+
+/* Variaciones en tamaño, duración y posición inicial */
+.snowflake:nth-child(odd) {
+    font-size: 18px;
+    animation-duration: 12s;
+}
+
+.snowflake:nth-child(even) {
+    font-size: 28px;
+    animation-duration: 8s;
+}
+
+.snowflake:nth-child(3n) {
+    font-size: 34px;
+    animation-duration: 14s;
+    animation-delay: 2s;
+}
+
+
+
+/*Carrito de compras*/
+
+#cartLink a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#cartLink a i {
+    font-size: 1.2em;
+    color: var(--color-text);
+    transition: color 0.3s ease;
+}
+
+#cartLink a:hover i {
+    color: var(--color-accent); /* Cambia de color al pasar el mouse */
+}

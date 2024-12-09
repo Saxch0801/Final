@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros - Estrella Esperanza</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./html/css/nosotros-style.css">
+    <link rel="stylesheet" href="./html/css/nav-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <script src="./js/countCart.js"></script>
+        <div class="container">
+            <h1>Estrella Esperanza</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/pagina-productos">Producto</a></li>
+                    <li><a href="/nosotros">Nosotros</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    <li id="loginLink"><a href="/login">Iniciar Sesión</a></li>
+                    <li id="signupLink"><a href="/signup">Registro</a></li>
+                    <li id="logoutLink" style="display: none;"><a href="/logout">Cerrar Sesión</a></li>
+                    <li id="cartLink" style="display: none;">
+                        <a href="/carrito">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="cartCount" style="background-color: var(--color-accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.8em; margin-left: 5px;">0</span>
+                        </a>                        
+                    </li>
+                </ul>
+            </nav> 
+        </div>
+    </header>
+
+    <main>
+        <section class="about">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px;">
+                <!-- Texto a la izquierda -->
+                <div style="width: 50%; padding-right: 20px;">
+                    <h2>Nuestra Historia</h2>
+                    <p>
+                        Fundada en el corazón de México, "Estrella de Esperanza" es una panadería con una tradición navideña única. Nos especializamos en brindar una experiencia de lujo durante estas fiestas, momentos que se disfrutan en familia. Y qué mejor manera de celebrarlos que con uno de nuestros deliciosos y maravillosos productos, llenos de sabor y calidez navideña.
+                    </p>
+                    <h3>Compromiso</h3>
+                    <p>
+                        En "Estrella de Esperanza", nos comprometemos a ofrecer productos de la más alta calidad, elaborados con ingredientes frescos y el cariño que solo una tradición familiar puede brindar. Cada bocado refleja nuestro amor por la panadería y el deseo de hacer que tu Navidad sea más especial. ¡Tu satisfacción y felicidad son nuestra mayor recompensa!
+                    </p>
+                </div>
+                
+                <!-- Imagen a la derecha -->
+                <div style="width: 50%; text-align: right;">
+                    <img src="https://thumbs.dreamstime.com/b/panader%C3%ADa-exhibe-decoraciones-navide%C3%B1as-ventana-de-navidad-pan-reci%C3%A9n-horneado-vendido-en-la-del-bakeshop-escaparate-264318101.jpg" alt="Nuestra Panadería" style="max-width: 300%; height: auto; border-radius: 10px;">
+                </div>
+            </div>
+        </section>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Estrella Esperanza derechos reservados para recibiran regalos estas fiestas.</p>
+        </div>
+    </footer>
+    <script src="./js/sesionLink.js"></script>
+    <script>
+
+                    // Manejar el cierre de sesión
+        document.getElementById('logoutLink').addEventListener('click', function (event) {
+            event.preventDefault(); // Evitar que el enlace se siga de forma predeterminada
+            fetch('/logout', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        // Redirigir al usuario al índice
+                        window.location.href = '/';
+                    } else {
+                        console.error('Error al cerrar sesión');
+                    }
+                })
+                .catch(error => console.error('Error en la solicitud de cierre de sesión:', error));
+        });
+    </script>
+</body>
+</html>

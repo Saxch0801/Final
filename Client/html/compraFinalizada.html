@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrella Esperanza</title>
+    <style>
+        :root {
+            --color-primary: #e74c3c;
+            --color-secondary: #2ecc71;
+            --color-accent: #f39c12;
+            --color-background: #d8bda7;
+            --color-text: #2f2f2f;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .loader {
+            border: 5px solid var(--color-primary);
+            border-top: 5px solid var(--color-accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .checkmark {
+            color: var(--color-secondary);
+            font-size: 50px;
+            display: none;
+        }
+
+        .message {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader" id="loader"></div>
+        <div class="checkmark" id="checkmark">✓</div>
+        <div class="message" id="message">Compra Finalizada</div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('checkmark').style.display = 'block';
+            document.getElementById('checkmark').style.animation = 'fadeIn 0.5s ease-in-out';
+            document.getElementById('message').style.opacity = '1';
+            setTimeout(() => {
+                window.location.href = '/carrito';
+            }, 2000);
+        }, 3000);
+    </script>
+</body>
+</html>

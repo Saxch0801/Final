@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Producto</title>
+    <link rel="stylesheet" href="./css/ver_producto-style.css">
+    <link rel="stylesheet" href="./css/nav-style.css">
+    <link rel="stylesheet" href="./css/modaldelProducto-style.css">
+    <link rel="stylesheet" href="./css/modalupdateProducto-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <script src="./js/countCart.js"></script>
+        <div class="container">
+            <h1>La Desesperanza</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/pagina-productos">Producto</a></li>
+                    <li><a href="/nosotros">Nosotros</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    <li id="loginLink"><a href="/login">Iniciar Sesión</a></li>
+                    <li id="signupLink"><a href="/signup">Registro</a></li>
+                    <li id="logoutLink" style="display: none;"><a href="/logout">Cerrar Sesión</a></li>
+                    <li id="cartLink" style="display: none;">
+                        <a href="/carrito">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="cartCount" style="background-color: var(--color-accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.8em; margin-left: 5px;">0</span>
+                        </a>                        
+                    </li>
+                </ul>
+            </nav> 
+        </div>
+    </header>
+
+    <div class="maincontainer">
+        <h1 id="producto-nombre">Nombre del Producto</h1>
+        <img id="producto-imagen" src="" alt="Imagen del producto" class="producto-imagen">
+        
+        <div class="producto-detalles">
+            <p><strong>Descripción:</strong> <span id="producto-descripcion">Descripción del producto</span></p>
+            <p><strong>Precio:</strong> <span id="producto-precio">0.00</span> MXN</p>
+            <p><strong>Stock:</strong> <span id="producto-stock">0</span></p>
+            <p><strong>Categoría:</strong> <span id="producto-categoria">Categoría del producto</span></p>
+        </div>
+        <div id="add-to-cart-container">
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" id="cantidadCarrito" min="1" value="1">
+            <button id="add-to-cart-btn" onclick="addToCart()">Añadir al carrito</button>
+            <audio id="Audio" src="./resources/[EFECTO DE SONIDO] Cascabeles NAVIDEÑOS - cascabeles de navidad.mp3"></audio>
+        </div>
+        
+        <div id="add-product-btn-container">
+            <button id="update-product-btn" onclick="openUpdateProductModal()">Actualizar Producto</button>
+            <button id="delete-product-btn" onclick="deleteProduct()">Eliminar Producto</button>
+        </div>
+        
+        <button onclick="volver()">Volver</button>
+    </div>
+
+<!-- Modal de confirmación -->
+<div id="confirm-delete-modal" style="display: none;">
+    <div class="modal-content">
+        <h3>Confirmar Eliminación</h3>
+        <p>¿Estás seguro de que deseas eliminar este producto?</p>
+        <button id="confirm-delete-btn">Eliminar</button>
+    </div>
+</div>
+
+<!-- Modal para actualizar producto -->
+<div id="updateProductModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeUpdateProductModal()">&times;</span>
+        <h2>Acualizar el producto</h2>
+        <form id="addProductForm" onsubmit="handleUpdateProductModal(event)">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" required></textarea>
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" name="precio" step="0.01" required>
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" required>
+            <label for="id_categoria">Categoría:</label>
+            <select id="id_categoria" name="id_categoria" required>
+                <option value="" disabled selected>Seleccione una categoría</option>
+                <option value="1">Pan</option>
+                <option value="2">Bebida</option>
+                <option value="3">Dulce</option>
+                <option value="4">Pastel</option>
+                <option value="5">Galleta</option>
+            </select>
+            <div id="urlInputContainer">
+                <label for="imagen_url">URL de la imagen:</label>
+                <input type="text" id="imagen_url" name="imagen_url" placeholder="https://ejemplo.com/imagen.jpg">
+            </div>
+
+            <button type="submit">Actualizar Producto</button>
+        </form>
+    </div>
+</div>
+    <script>
+        const playButton = document.getElementById('add-to-cart-btn');
+        const audioElement = document.getElementById('Audio');
+
+        playButton.addEventListener('click', () => {
+            audioElement.play();
+        });
+    </script>
+    <script>
+        async function addToCart() {
+
+            const productId = getProductId(); // Función que obtiene el ID del producto (deberías tenerla definida)
+            const quantity = parseInt(document.getElementById('cantidadCarrito').value); // Obtener la cantidad seleccionada
+
+            if (!productId || !quantity || quantity <= 0) {
+                alert('Por favor, selecciona una cantidad válida.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/addToCart`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id_producto: productId,
+                        cantidad: quantity,
+                    }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message || 'Producto añadido al carrito exitosamente');
+                    actualizarContadorCarrito();
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Error al añadir el producto al carrito');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('No se pudo añadir el producto al carrito.');
+            }
+        }
+    </script>
+    <script>
+                // Verificar si hay una sesión activa
+                fetch('/session')
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    // Ocultar enlaces de inicio de sesión y registro
+                    document.getElementById('loginLink').style.display = 'none';
+                    document.getElementById('signupLink').style.display = 'none';
+                    // Mostrar el enlace de cerrar sesión
+                    document.getElementById('logoutLink').style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error al verificar la sesión:', error));
+
+        // Función para obtener el ID del producto de la URL
+        function getProductId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id'); // Obtener el valor del parámetro 'id'
+        }
+
+        // Función para cargar los detalles del producto
+        async function loadProductDetails() {
+            const productId = getProductId();
+            if (!productId) {
+                alert('No se proporcionó un ID de producto.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/productos/${productId}`); // Realiza la solicitud a la API
+                if (!response.ok) {
+                    throw new Error('Error al obtener los detalles del producto');
+                }
+
+                const producto = await response.json(); // Convertir la respuesta en JSON
+
+                // Asignar los valores a los elementos del HTML
+                document.getElementById('producto-nombre').textContent = producto.nombre;
+                document.getElementById('producto-imagen').src = producto.imagen_url || 'placeholder.jpg'; // Usa una imagen de marcador de posición si no hay imagen
+                document.getElementById('producto-descripcion').textContent = producto.descripcion;
+                document.getElementById('producto-precio').textContent = producto.precio.toFixed(2);
+                document.getElementById('producto-stock').textContent = producto.stock;
+                document.getElementById('producto-categoria').textContent = producto.nombre_categoria; // Muestra el nombre de la categoría
+
+                document.getElementById('nombre').value = producto.nombre;
+                document.getElementById('descripcion').value = producto.descripcion;
+                document.getElementById('precio').value = producto.precio;
+                document.getElementById('stock').value = producto.stock;
+                document.getElementById('id_categoria').value = producto.id_categoria;
+                document.getElementById('imagen_url').value = producto.imagen_url;
+
+                const cantMax = document.getElementById('cantidadCarrito');
+                cantMax.max = producto.stock;
+
+                // Verificar si el usuario es administrador
+                await checkIfAdmin();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar los detalles del producto');
+            }
+        }
+
+        // Función para verificar si el usuario es administrador
+        async function checkIfAdmin() {
+            try {
+                const response = await fetch('/isAdmin');
+                const data = await response.json();
+                if (data.isAdmin) {
+                    document.getElementById('add-product-btn-container').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error al verificar rol de administrador:', error);
+            }
+        }
+// Función para abrir el modal de agregar producto
+function openUpdateProductModal() {
+    document.getElementById('updateProductModal').style.display = 'flex';
+}
+
+// Función para cerrar el modal de agregar producto
+function closeUpdateProductModal() {
+    document.getElementById('updateProductModal').style.display = 'none';
+}
+
+// Cerrar el modal al hacer clic fuera del contenido
+window.onclick = function(event) {
+    const modal = document.getElementById('updateProductModal');
+    if (event.target === modal) {
+        closeUpdateProductModal();
+    }
+};
+
+// Manejar el envío del formulario para actualizar un producto
+async function handleUpdateProductModal(event) {
+    event.preventDefault();
+    const productId = getProductId(); // Obtén el ID del producto de alguna manera, como de un elemento de la página
+    if (!productId) {
+        alert('No se proporcionó un ID de producto.');
+        return;
+    }
+
+    const nombre = document.getElementById('nombre').value;
+    const descripcion = document.getElementById('descripcion').value;
+    const precio = parseFloat(document.getElementById('precio').value); // Asegúrate de que sea un número
+    const stock = parseInt(document.getElementById('stock').value);     // Asegúrate de que sea un número
+    const id_categoria = parseInt(document.getElementById('id_categoria').value);
+    const imagen_url = document.getElementById('imagen_url').value;
+    const imagen = null; // Asigna el valor que necesites para la imagen
+
+    // Enviar los datos al servidor (si la imagen es una URL)
+    await sendProductData({ nombre, descripcion, precio, stock, id_categoria, imagen_url, imagen }, productId);
+}
+
+// Función para enviar los datos al servidor
+async function sendProductData(productData, productId) {
+    try {
+        const response = await fetch(`/updateProductos/${productId}`, {
+            method: 'PUT', // Cambia a PUT para actualizar
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productData),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message);
+            closeUpdateProductModal(); // Cierra el modal después de actualizar
+        } else {
+            alert(result.error);
+        }
+    } catch (error) {
+        console.error('Error al actualizar el producto:', error);
+    }
+}
+
+        // Función para eliminar el producto
+        function deleteProduct() {
+            showConfirmDeleteModal(); // Mostrar modal de confirmación
+
+            // Manejar la confirmación y cancelación dentro del modal
+            document.getElementById('confirm-delete-btn').onclick = async function() {
+                const productId = getProductId();
+                try {
+                    const response = await fetch(`/deleteProductos/${productId}`, { method: 'DELETE' });
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar el producto');
+                    }
+                    alert('Producto eliminado con éxito');
+                    window.location.href = '/pagina-productos'; // Redirigir a la página de productos
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el producto');
+                }
+                hideConfirmDeleteModal(); // Ocultar el modal después de la eliminación
+            };
+
+            // Manejar la cancelación
+            document.getElementById('cancel-delete-btn').onclick = function() {
+                hideConfirmDeleteModal(); // Solo ocultar el modal
+            };
+        }
+
+        // Función para mostrar el modal de confirmación
+        function showConfirmDeleteModal() {
+            document.getElementById('confirm-delete-modal').style.display = 'block';
+        }
+
+        // Función para ocultar el modal
+        function hideConfirmDeleteModal() {
+            document.getElementById('confirm-delete-modal').style.display = 'none';
+        }
+
+        function volver() {
+            window.history.back(); // Regresar a la página anterior
+        }
+
+        // Cargar los detalles del producto al cargar la página
+        window.onload = loadProductDetails;
+
+                // Manejar el cierre de sesión
+                document.getElementById('logoutLink').addEventListener('click', function (event) {
+            event.preventDefault(); // Evitar que el enlace se siga de forma predeterminada
+            fetch('/logout', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        // Redirigir al usuario al índice
+                        window.location.href = '/'; // Cambia la ruta según tu configuración
+                    } else {
+                        console.error('Error al cerrar sesión');
+                    }
+                })
+                .catch(error => console.error('Error en la solicitud de cierre de sesión:', error));
+        });
+            async function checkIfAdmin() {
+            try {
+                const response = await fetch('/isAdmin');
+                const data = await response.json();
+                if (!data.isAdmin) {
+                    document.getElementById('update-product-btn').style.display = 'none';
+                    document.getElementById('delete-product-btn').style.display = 'none';;
+                }
+            } catch (error) {
+            }
+        }
+    </script>
+    <script src="./js/sesionLink.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrella Esperanza - Panadería de Navidad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./html/css/index-style.css">
+    <link rel="stylesheet" href="./html/css/nav-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <script src="./js/countCart.js"></script>
+        <div class="container">
+            <h1>Estrella Esperanza</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/pagina-productos">Producto</a></li>
+                    <li><a href="/nosotros">Nosotros</a></li>
+                    <li><a href="/contacto">Contacto</a></li>
+                    <li id="loginLink"><a href="/login">Iniciar Sesión</a></li>
+                    <li id="signupLink"><a href="/signup">Registro</a></li>
+                    <li id="logoutLink" style="display: none;"><a href="/logout">Cerrar Sesión</a></li>
+                    <li id="cartLink" style="display: none;">
+                        <a href="/carrito">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span id="cartCount" style="background-color: var(--color-accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.8em; margin-left: 5px;">0</span>
+                        </a>                        
+                    </li>
+                </ul>
+            </nav>            
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>"Endulza tu Navidad con el sabor de nuestras delicias recién horneadas. ¡El mejor pan para compartir en estas fiestas!"</h2>
+                <p>Descubre nuestras delicias para estas fiestas en familia</p>
+                <a href="/pagina-productos" class="cta-button">Ver Catálogo</a>
+            </div>
+        </section>
+
+        <div class="container">
+            <section class="features">
+                <div class="feature">
+                    <img src="https://www.gerardcoma.com/wp-content/uploads/2023/09/pan-de-navidad.jpg" alt="Pan de Navidad">
+                    <h3>Pan de Navidad</h3>
+                    <p>"Delicia navideña: suave, esponjoso y lleno de tradición."</p>
+                </div>
+                <div class="feature">
+                    <img src="https://www.elglobo.com.mx/cdn/shop/articles/ONL_ELG_Cover-web_Historia-Rosca_04.01.22_1_1024x.jpg?v=1641399666" alt="Rosca de Reyes">
+                    <h3>Rosca de Reyes</h3>
+                    <p>"Tradición y dulzura en cada rebanada, ¡descubre la magia!"</p>
+                </div>
+                <div class="feature">
+                    <img src="https://cloudfront-us-east-1.images.arcpublishing.com/elespectador/TI65RGPUXNCRBOQFRLY7VNHLOU.jpg" alt="Chocolate Caliente">
+                    <h3>Chocolate Caliente</h3>
+                    <p> "Calidez en cada sorbo, perfecto para abrazar el invierno."</p>
+                </div><div class="snowflakes">
+                    <!-- Añadimos múltiples copos con posiciones iniciales aleatorias -->
+                    <div class="snowflake" style="left: 10%;">❄</div>
+                    <div class="snowflake" style="left: 20%;">❄</div>
+                    <div class="snowflake" style="left: 30%;">❄</div>
+                    <div class="snowflake" style="left: 40%;">❄</div>
+                    <div class="snowflake" style="left: 50%;">❄</div>
+                    <div class="snowflake" style="left: 60%;">❄</div>
+                    <div class="snowflake" style="left: 70%;">❄</div>
+                    <div class="snowflake" style="left: 80%;">❄</div>
+                    <div class="snowflake" style="left: 90%;">❄</div>
+                    <div class="snowflake" style="left: 95%;">❄</div>
+                </div>
+                
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Estrella Esperanza derechos reservados para recibiran regalos estas fiestas</p>
+        </div>
+    <script>
+        // Manejar el cierre de sesión
+        document.getElementById('logoutLink').addEventListener('click', function (event) {
+            event.preventDefault(); // Evitar que el enlace se siga de forma predeterminada
+            fetch('/logout', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        // Redirigir al usuario al índice
+                        window.location.href = '/'; // Cambia la ruta según tu configuración
+                    } else {
+                        console.error('Error al cerrar sesión');
+                    }
+                })
+                .catch(error => console.error('Error en la solicitud de cierre de sesión:', error));
+        });
+    </script>
+    <script src="./html/js/sesionLink.js"></script>
+</body>
+</html>

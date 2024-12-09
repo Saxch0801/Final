@@ -1,0 +1,135 @@
+.hero {
+    background-image: url('https://png.pngtree.com/background/20220714/original/pngtree-background-plaid-christmas-red-green-and-line-white-pattern-picture-image_1604044.jpg'); /* Mantén el enlace original */
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-text);
+    position: relative;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5); /* Oscurecer para resaltar el texto sobre la imagen */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+.hero-content p{
+    color: #fff;
+}
+h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5em;
+    opacity: 200%;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(255, 0, 0, 0.3); /* Sombra festiva */
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #388e3c; /* Verde navideño para el botón */
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Sombra sutil */
+}
+
+.cta-button:hover {
+    background-color: #d32f2f; /* Rojo navideño cuando pasa el mouse */
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4); /* Efecto de sombra más pronunciado */
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.feature {
+    background-color: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid #d32f2f; /* Bordes rojos para dar un toque navideño */
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(255,107,107,0.3); /* Efecto más llamativo al pasar el mouse */
+}
+
+.feature img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+footer {
+    background-color: #d32f2f; /* Fondo rojo navideño para el pie de página */
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    font-family: 'Playfair Display', serif;
+}
+
+footer::before {
+    content: '\2600'; /* Agregar un ícono navideño, como una estrella o sol */
+    font-size: 2em;
+    color: #fff;
+    margin-right: 10px;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Detalles gráficos navideños */
+.hero::after {
+    content: url('https://path-to-snowflake-icon.png'); /* Puedes agregar copos de nieve o elementos gráficos navideños */
+    display: block;
+    margin-top: 20px;
+    width: 30px;
+    height: 30px;
+}
+
+/* Adición de animación de nieve */
+@keyframes snow {
+    0% { top: -10px; opacity: 0; }
+    100% { top: 100%; opacity: 1; }
+}
+
+.hero::after {
+    content: '\2744'; /* Símbolo de copo de nieve */
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    font-size: 3em;
+    color: #fff;
+    animation: snow 10s linear infinite;
+    z-index: 1;
+}
